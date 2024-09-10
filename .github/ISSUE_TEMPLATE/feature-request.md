@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Request features to be added to LFTools.
-title: Feature Request
+title: "[REQ]"
 labels: ''
 assignees: Awesome-neos145
 
