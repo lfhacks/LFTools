@@ -1,8 +1,17 @@
 # LFTools
-Download LFTools from the [releases](https://github.com/lfhacks/LFTools/releases) tab.
+Ulilities to easily mount/eject Didj and Leapster2 devices, while also being able to manage the filesystem.
 
-Tools to easily mount/lock/eject Leapster2 or Didj devices.
+# Features Completed
+[X]Basic Mounting/Locking/Ejecting
 
-LFTools has both a Linux and Windows version. You can download them from the releases tab.
+[X]Package Downloader
 
+[/]Package Utilities
+
+[-]Resetting Didj
+
+[-]Other mumbo jumbo I can't come up with right now
+
+
+# License
 This project is licensed under [GPL v3.0](https://github.com/lfhacks/LFTools?tab=GPL-3.0-1-ov-file).

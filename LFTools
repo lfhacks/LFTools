@@ -99,6 +99,7 @@ do
                 echo "Ejecting now. Update completed."
                 rm -rf ./firmware-LF_LF1000/
                 sudo sg_raw $lfdevpath C6 00 00 00 00 00 00 00 00 00
+                rm ~/.lftools/mount
                 exit
             fi
             ;;
