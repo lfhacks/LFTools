@@ -1,6 +1,9 @@
 #!/bin/bash
 
-output=$( which sginfo )
+# let me also point out that everything here is a work in progress ya dummies
+# some people fail to read
+
+sgchk=$( which sginfo )
 l2pkgdir="./pkgs"
 l2usdir="$l2pkgdir/US"
 l2ukdir="$l2pkgdir/UK"
@@ -8,7 +11,7 @@ l2dmdir="$l2pkgdir/Demos"
 l2sysdir="$l2pkgdir/System"
 l2tooldir="$l2pkgdir/Tools"
 
-if [ -z "$output" ]
+if [ -z "$sgchk" ]
 then
     # prompt install of sg3_utils
     echo "Package sg3-utils (sg3_utils, on some distros) not installed! Install it before proceeding."
@@ -470,11 +473,11 @@ do
             esac
             ;;
         p)
-            # Create array to store packages
+            # create package list
             declare -a packages
             pkg_count=0
             
-            # Function to add packages from a directory
+            # add packages from directory to list
             scan_packages() {
                 local dir=$1
                 if [ -d "$dir" ]; then
@@ -487,7 +490,7 @@ do
                 fi
             }
             
-            # Scan all package directories
+            # scan pkg directories
             scan_packages "$l2usdir"
             scan_packages "$l2ukdir"
             scan_packages "$l2dmdir"
@@ -495,14 +498,14 @@ do
             scan_packages "$l2tooldir"
             
             if [ $pkg_count -eq 0 ]; then
-                echo "No packages found in ./pkgs"
+                echo "No packages found in ./pkgs!!!"
                 exit
             fi
             
             echo "Found $pkg_count package(s):"
             echo ""
             
-            # Display packages with numbers
+            # display pkgs with numbers
             for i in "${!packages[@]}"; do
                 pkg_name=$(basename "${packages[$i]}")
                 echo "$((i+1)). $pkg_name"
@@ -576,7 +579,7 @@ do
                     echo "Done! $pkg_name has been copied to the SD card."
                     ;;
                 2)
-                    # Delete from SD card
+                    # delete from sd
                     echo "Are you sure you want to delete $pkg_name from the SD?"
                     echo -n "Type 'yes' to confirm: "
                     read -r confirm_delete
@@ -621,6 +624,7 @@ do
             esac
             ;;
         c)
+            # only use this if device has committed sudoku
             echo "This will attempt to clear all related LFTools files."
             echo "Please do not use this to try to run other commands while the Leapster2/Didj is mounted or unmounted."
             echo "This is only intended for an emergency situation where the Leapster2/Didj has either:"
