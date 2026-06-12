@@ -1,0 +1,646 @@
+#!/bin/bash
+
+output=$( which sginfo )
+l2pkgdir="./pkgs"
+l2usdir="$l2pkgdir/US"
+l2ukdir="$l2pkgdir/UK"
+l2dmdir="$l2pkgdir/Demos"
+l2sysdir="$l2pkgdir/System"
+l2tooldir="$l2pkgdir/Tools"
+
+if [ -z "$output" ]
+then
+    # prompt install of sg3_utils
+    echo "Package sg3-utils (sg3_utils, on some distros) not installed! Install it before proceeding."
+    exit
+    
+else
+    # continue on
+    echo "LF Tools v1.2-beta3"
+    echo "--------------------------"
+fi
+
+if [ ! -d ~/.lftools/ ]; then
+    echo "It looks like this is your first time here! I will now create you a config directory..."
+    mkdir -p ~/.lftools/
+    echo "Done! Run [./LFTools -h] to view usage information."
+    exit
+fi
+
+updatec=n
+
+while getopts :mlxuhdUpc OPTION
+do
+    case $OPTION in
+        m)
+            # check mount first, then proceed
+            if [ -f ~/.lftools/mount ]; then
+                echo "Already mounted!"
+                exit
+            fi
+            echo "Find your Leapster2/Didj, and enter the path. (e.g. /dev/sg3)"
+            sudo sg_scan -i
+            echo -n "Path: "
+            read -r lfdevpath
+            sudo sg_raw $lfdevpath C2 00 00 00 00 00 00 00 00 00
+            touch ~/.lftools/mount
+            ;;
+        l)
+            if [ ! -f ~/.lftools/mount ]; then
+                echo "Cannot lock without a mounted device!"
+                exit
+            fi
+            echo "Find your Leapster2/Didj, and enter the path. (e.g. /dev/sg3)"
+            sudo sg_scan -i
+            echo -n "Path: "
+            read -r lfdevpath
+            sudo sg_raw $lfdevpath C1 00 00 00 00 00 00 00 00 00
+            ;;
+        x)
+            if [ ! -f ~/.lftools/mount ]; then
+                echo "Cannot eject without a mounted device!"
+                exit
+            fi
+            echo "Find your Leapster2/Didj, and enter the path. (e.g. /dev/sg3)"
+            sudo sg_scan -i
+            echo -n "Path: "
+            read -r lfdevpath
+            sudo sg_raw $lfdevpath C6 00 00 00 00 00 00 00 00 00
+            rm ~/.lftools/mount
+            ;;
+        u)
+            if [ ! -f ~/.lftools/mount ]; then
+                echo "Please mount your Didj first!"
+                exit
+            fi
+            echo "You are about to do something potentially dangerous to your Didj."
+            echo "Make sure you have full batteries, (or be plugged into AC power) and run this."
+            echo "Do you wish to continue?"
+            echo -n "y/N: "
+            read -r updatec
+            if [ "$updatec" = 'n' ] || [ "$updatec" = '' ]
+            then
+                # cancel update
+                echo "Aborted."
+                exit
+            else
+                # continue update
+                echo "Updating now..."
+                curl -O https://file.garden/YtxRl-gHkWVkfPs7/Firmware/DidjFirmware.zip
+                unzip -q ./DidjFirmware.zip
+                rm ./DidjFirmware.zip
+                echo "Now sending update to Didj. Please wait..."
+                cp -r ./firmware-LF_LF1000/ /media/$USER/Didj/Base/
+                echo "Done. Waiting about 30 seconds for the Didj to recognize the update."
+                sleep 30
+                echo "Ejecting now. Update completed."
+                rm -rf ./firmware-LF_LF1000/
+                sudo sg_raw $lfdevpath C6 00 00 00 00 00 00 00 00 00
+                exit
+            fi
+            ;;
+        h)
+            echo "LFTools Usage:"
+            echo "-m: mount"
+            echo "-l: lock"
+            echo "-x: eject"
+            echo "-u: update didj"
+            echo "-d: get packages"
+            echo "-p: manage downloaded packages"
+            echo "-f: sd package manager"
+            echo "-c: emergency clear"
+            echo "-h: help"
+            echo "example: ./LFTools -d"
+            ;;
+        d)
+            echo "Select an option."
+            echo "1. U.S."
+            echo "2. U.K."
+            echo "3. System Packages"
+            echo "4. Demos"
+            echo "5. Tools"
+            echo -n "Please type here: "
+            read -r rg
+            case $rg in
+                1)
+                    echo "-------------------------------------"
+                    echo "Select a package from the list below."
+                    echo "1. Dragon Kingdom"
+                    echo "2. Chicken Coop"
+                    echo "3. Rabbit River"
+                    echo "4. Shape Shop"
+                    echo "5. Number Raiders"
+                    echo "6. Letterpillar"
+                    echo -n "Please type here: "
+                    read -r uspkgs
+                    case $uspkgs in
+                        1)
+                            echo "Getting Dragon Kingdom..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00010011-000000.lfp
+                            if [ ! -d "$l2usdir" ]; then
+                                echo "Creating a US package folder."
+                                mkdir -p "$l2usdir"
+                            fi
+                            unzip -q LSTR-0x00010011-000000.lfp -d "$l2usdir/LSTR-0x00010011-000000"
+                            echo "Package is now ready to go. It can be found in $l2usdir/LSTR-0x00010011-000000."
+                            ;;
+                        2)
+                            echo "Getting Chicken Coop..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x0013000A-000000.lfp # lfps are just really fancy zip files
+                            if [ ! -d "$l2usdir" ]; then
+                                echo "Creating a US package folder."
+                                mkdir -p "$l2usdir"
+                            fi
+                            unzip -q LSTR-0x0013000A-000000.lfp -d "$l2usdir/LSTR-0x0013000A-000000"
+                            echo "Package is now ready to go. It can be found in $l2usdir/LSTR-0x0013000A-000000."
+                            ;;
+                        3)
+                            echo "Getting Rabbit River..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x0013000B-000000.lfp
+                            if [ ! -d "$l2usdir" ]; then
+                                echo "Creating a US package folder."
+                                mkdir -p "$l2usdir"
+                            fi
+                            unzip -q LSTR-0x0013000B-000000.lfp -d "$l2usdir/LSTR-0x0013000B-000000"
+                            echo "Package is now ready to go. It can be found in $l2usdir/LSTR-0x0013000B-000000."
+
+                            ;;
+                        4)
+                            echo "Getting Shape Shop..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x0013000C-000000.lfp
+                            if [ ! -d "$l2usdir" ]; then
+                                echo "Creating a US package folder."
+                                mkdir -p "$l2usdir"
+                            fi
+                            unzip -q LSTR-0x0013000C-000000.lfp -d "$l2usdir/LSTR-0x0013000C-000000"
+                            echo "Package is now ready to go. It can be found in $l2usdir/LSTR-0x0013000C-000000."
+                            ;;
+                        5)
+                            echo "Getting Number Raiders..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130002-000000.lfp
+                            if [ ! -d "$l2usdir" ]; then
+                                echo "Creating a US package folder."
+                                mkdir -p "$l2usdir"
+                            fi
+                            unzip -q LSTR-0x00130002-000000.lfp -d "$l2usdir/LSTR-0x00130002-000000"
+                            echo "Package is now ready to go. It can be found in $l2usdir/LSTR-0x00130002-000000."
+                            ;;
+                        6)
+                            echo "Getting Letterpillar..." # this game is really buggy for some reason, it crashes a lot when powering off
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130003-000000.lfp
+                            if [ ! -d "$l2usdir" ]; then
+                                echo "Creating a US package folder."
+                                mkdir -p "$l2usdir"
+                            fi
+                            unzip -q LSTR-0x00130003-000000.lfp -d "$l2usdir/LSTR-0x00130003-000000"
+                            echo "Package is now ready to go. It can be found in $l2usdir/LSTR-0x00130003-000000."
+                            ;;
+                        *)
+                            echo "Not a valid option."
+                            exit
+                            ;;
+                    esac
+                    ;;
+                2)
+                    echo "-------------------------------------"
+                    echo "Select a package from the list below."
+                    echo "1. Number Raiders"
+                    echo "2. Letterpillar"
+                    echo "3. Chicken Coop"
+                    echo "4. Rabbit River"
+                    echo "5. Shape Shop"
+                    echo "6. Dragon Kingdom"
+                    echo -n "Please type here: "
+                    read -r ukpkgs
+                    case $ukpkgs in
+                        1)
+                            echo "Getting Number Raiders..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130004-000000.lfp
+                            if [ ! -d "$l2ukdir" ]; then
+                                echo "Creating a UK package folder."
+                                mkdir -p "$l2ukdir"
+                            fi
+                            unzip -q LSTR-0x00130004-000000.lfp -d "$l2ukdir/LSTR-0x00130004-000000"
+                            echo "Package is now ready to go. It can be found in $l2ukdir/LSTR-0x00130004-000000."
+                            ;;
+                        2)
+                            echo "Getting Letterpillar..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130005-000000.lfp
+                            if [ ! -d "$l2ukdir" ]; then
+                                echo "Creating a UK package folder."
+                                mkdir -p "$l2ukdir"
+                            fi
+                            unzip -q LSTR-0x00130005-000000.lfp -d "$l2ukdir/LSTR-0x00130005-000000"
+                            echo "Package is now ready to go. It can be found in $l2ukdir/LSTR-0x00130005-000000."
+                            ;;
+                        3)
+                            echo "Getting Chicken Coop..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130010-000000.lfp
+                            if [ ! -d "$l2ukdir" ]; then
+                                echo "Creating a UK package folder."
+                                mkdir -p "$l2ukdir"
+                            fi
+                            unzip -q LSTR-0x00130010-000000.lfp -d "$l2ukdir/LSTR-0x00130010-000000"
+                            echo "Package is now ready to go. It can be found in $l2ukdir/LSTR-0x00130010-000000."
+                            ;;
+                        4)
+                            echo "Getting Rabbit River..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130011-000000.lfp
+                            if [ ! -d "$l2ukdir" ]; then
+                                echo "Creating a UK package folder."
+                                mkdir -p "$l2ukdir"
+                            fi
+                            unzip -q LSTR-0x00130011-000000.lfp -d "$l2ukdir/LSTR-0x00130011-000000"
+                            echo "Package is now ready to go. It can be found in $l2ukdir/LSTR-0x00130011-000000."
+                            ;;
+                        5)
+                            echo "Getting Shape Shop..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130012-000000.lfp
+                            if [ ! -d "$l2ukdir" ]; then
+                                echo "Creating a UK package folder."
+                                mkdir -p "$l2ukdir"
+                            fi
+                            unzip -q LSTR-0x00130012-000000.lfp -d "$l2ukdir/LSTR-0x00130012-000000"
+                            echo "Package is now ready to go. It can be found in $l2ukdir/LSTR-0x00130012-000000."
+                            ;;
+                        6)
+                            echo "Getting Dragon Kingdom..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130013-000000.lfp
+                            if [ ! -d "$l2ukdir" ]; then
+                                echo "Creating a UK package folder."
+                                mkdir -p "$l2ukdir"
+                            fi
+                            unzip -q LSTR-0x00130013-000000.lfp -d "$l2ukdir/LSTR-0x00130013-000000"
+                            echo "Package is now ready to go. It can be found in $l2ukdir/LSTR-0x00130013-000000."
+                            ;;
+                        *)
+                            echo "Not a valid option."
+                            exit
+                            ;;
+                    esac
+                    ;;
+                3)
+                    echo "-------------------------------------"
+                    echo "Select a package from the list below."
+                    echo "1. SDMenu (Original)"
+                    echo "2. SDMenu (Updated)"
+                    echo -n "Please type here: "
+                    read -r syspkgs
+                    case $syspkgs in
+                        1)
+                            echo "Getting SDMenu (Original)..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130001-000000.lfp
+                            if [ ! -d "$l2sysdir" ]; then
+                                echo "Creating a System package folder."
+                                mkdir -p "$l2sysdir"
+                            fi
+                            unzip -q LSTR-0x00130001-000000.lfp -d "$l2sysdir/"
+                            echo "Package is now ready to go. It can be found in $l2sysdir/SDMenu."
+                            ;;
+                        2)
+                            echo "Getting SDMenu (Updated)..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130006-000000.lfp
+                            if [ ! -d "$l2sysdir" ]; then
+                                echo "Creating a System package folder."
+                                mkdir -p "$l2sysdir"
+                            fi
+                            unzip -q LSTR-0x00130006-000000.lfp -d "$l2sysdir/"
+                            echo "Package is now ready to go. It can be found in $l2sysdir/SDMenu."
+                            ;;
+                        *)
+                            echo "Not a valid option."
+                            exit
+                            ;;
+                    esac
+                    ;;
+                4)
+                    echo "-------------------------------------"
+                    echo "Select a package from the list below."
+                    echo "1. Wolverine & the X-MEN"
+                    echo "2. The Princess and the Frog"
+                    echo "3. Ni Hao Kai Lan"
+                    echo "4. UP"
+                    echo "5. Star Wars Jedi Reading "
+                    echo "6. Toy Story 3"
+                    echo -n "Please type here: "
+                    read -r dmpkgs
+                    case $dmpkgs in
+                        1)
+                            echo "Getting Wolverine & the X-MEN..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x0013000E-000000.lfp
+                            if [ ! -d "$l2dmdir" ]; then
+                                echo "Creating a Demo package folder."
+                                mkdir -p "$l2dmdir"
+                            fi
+                            unzip -q LSTR-0x0013000E-000000.lfp -d "$l2dmdir/LSTR-0x0013000E-000000"
+                            echo "Package is now ready to go. It can be found in $l2dmdir/LSTR-0x0013000E-000000."
+                            ;;
+                        2)
+                            echo "Getting The Princess and the Frog..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x0013000F-000000.lfp
+                            if [ ! -d "$l2dmdir" ]; then
+                                echo "Creating a Demo package folder."
+                                mkdir -p "$l2dmdir"
+                            fi
+                            unzip -q LSTR-0x0013000F-000000.lfp -d "$l2dmdir/LSTR-0x0013000F-000000"
+                            echo "Package is now ready to go. It can be found in $l2dmdir/LSTR-0x0013000F-000000."
+                            ;;
+                        3)
+                            echo "Getting Ni Hao Kai Lan..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130007-000000.lfp
+                            if [ ! -d "$l2dmdir" ]; then
+                                echo "Creating a Demo package folder."
+                                mkdir -p "$l2dmdir"
+                            fi
+                            unzip -q LSTR-0x00130007-000000.lfp -d "$l2dmdir/LSTR-0x00130007-000000"
+                            echo "Package is now ready to go. It can be found in $l2dmdir/LSTR-0x00130007-000000."
+                            ;;
+                        4)
+                            echo "Getting UP..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130008-000000.lfp
+                            if [ ! -d "$l2dmdir" ]; then
+                                echo "Creating a Demo package folder."
+                                mkdir -p "$l2dmdir"
+                            fi
+                            unzip -q LSTR-0x00130008-000000.lfp -d "$l2dmdir/LSTR-0x00130008-000000"
+                            echo "Package is now ready to go. It can be found in $l2dmdir/LSTR-0x00130008-000000."
+                            ;;
+                        5)
+                            echo "Getting Star Wars Jedi Reading..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130009-000000.lfp
+                            if [ ! -d "$l2dmdir" ]; then
+                                echo "Creating a Demo package folder."
+                                mkdir -p "$l2dmdir"
+                            fi
+                            unzip -q LSTR-0x00130009-000000.lfp -d "$l2dmdir/LSTR-0x00130009-000000"
+                            echo "Package is now ready to go. It can be found in $l2dmdir/LSTR-0x00130009-000000."
+                            ;;
+                        6)
+                            echo "Getting Toy Story 3..."
+                            curl -L -O https://archive.org/download/lstr-0x-00010011-000000/LSTR-0x00130014-000000.lfp
+                            if [ ! -d "$l2dmdir" ]; then
+                                echo "Creating a Demo package folder."
+                                mkdir -p "$l2dmdir"
+                            fi
+                            unzip -q LSTR-0x00130014-000000.lfp -d "$l2dmdir/LSTR-0x00130014-000000"
+                            echo "Package is now ready to go. It can be found in $l2dmdir/LSTR-0x00130014-000000."
+                            ;;
+                        *)
+                            echo "Not a valid option."
+                            exit
+                            ;;
+                    esac
+                    ;;
+                5)
+                    echo "-------------------------------------"
+                    echo "Select a package to get info about it, and then choose to download it."
+                    echo "1. Bad Apple Demoscene"
+                    echo "2. .DMPSTER"
+                    echo -n "Please type here: "
+                    read -r tlpkgs
+                    case $tlpkgs in
+                        1)
+                            echo "-------------------------------------"
+                            echo "Bad Apple"
+                            echo "Developer: toadster172"
+                            echo "A C++ port of Bad Apple to the Leapster2, complete with sound and 60fps video."
+                            echo "Code: https://github.com/toadster172/Bad-Leapster-"
+                            echo -n "Download? (y/N): "
+                            read -r badapplec
+                            if [ "$badapplec" = 'y' ] || [ "$badapplec" = 'Y' ]
+                            then
+                                echo "Getting Bad Apple..." 
+                                curl -O https://file.garden/YtxRl-gHkWVkfPs7/paks/badapple.zip
+                                if [ ! -d "$l2tooldir" ]; then
+                                    echo "Creating a Tools folder."
+                                    mkdir -p "$l2tooldir"
+                                fi
+                            fi
+                            unzip -q badapple.zip -d "$l2tooldir/LSTR-0x00001337-000000"
+                            echo "!!!IMPORTANT!!!"
+                            echo "You MUST turn your Leapster2 off by removing the batteries. The power button will not work."
+                            echo "Package is now ready to go. It can be found in $l2tooldir/LSTR-0x00001337-000000."
+                            ;;
+                        2)
+                            echo "-------------------------------------"
+                            echo ".DMPSTER"
+                            echo "Developer: toadster172"
+                            echo "A tool designed to dump cartridges and the BIOS on the Leapster2."
+                            echo "Dumps can be found in SD:/Leapster/."
+                            echo "Code: https://github.com/toadster172/.DMPSTER"
+                            echo -n "Download? (y/N): "
+                            read -r dmpsterc
+                            if [ "$dmpsterc" = 'y' ] || [ "$dmpsterc" = 'Y' ]
+                            then
+                                echo "Just one more thing. Choose an icon for the package."
+                                echo "1. Early LeapFrog-style icon (by Awesome_neos145)"
+                                echo "2. Later LeapFrog-style icon (by FairPlay137)"
+                                echo -n "Please type here: "
+                                read -r dmpicon
+                                case $dmpicon in
+                                    1)
+                                        echo "Getting .DMPSTER with early icon..."
+                                        curl -O https://file.garden/YtxRl-gHkWVkfPs7/paks/earlylf.zip
+                                        if [ ! -d "$l2tooldir" ]; then
+                                            echo "Creating a Tools folder."
+                                            mkdir -p "$l2tooldir"
+                                        fi
+                                        unzip -q earlylf.zip -d "$l2tooldir/LSTR-0x00FE0001-000000"
+                                        echo "Package is now ready to go. It can be found in $l2tooldir/LSTR-0x00FE0001-000000."
+                                        ;;
+                                    2)
+                                        echo "Getting .DMPSTER with later icon..."
+                                        curl -O https://file.garden/YtxRl-gHkWVkfPs7/paks/latelf.zip
+                                        if [ ! -d "$l2tooldir" ]; then
+                                            echo "Creating a Tools folder."
+                                            mkdir -p "$l2tooldir"
+                                        fi
+                                        unzip -q latelf.zip -d "$l2tooldir/LSTR-0x00FE0001-000000"
+                                        echo "Package is now ready to go. It can be found in $l2tooldir/LSTR-0x00FE0001-000000."
+                                        ;;
+                                esac
+                            fi
+                    esac
+                    ;;
+                                
+                *)
+                    echo "Not a valid option."
+                    exit
+                    ;;
+            esac
+            ;;
+        p)
+            # Create array to store packages
+            declare -a packages
+            pkg_count=0
+            
+            # Function to add packages from a directory
+            scan_packages() {
+                local dir=$1
+                if [ -d "$dir" ]; then
+                    for pkg_dir in "$dir"/*; do
+                        if [ -d "$pkg_dir" ]; then
+                            packages[$pkg_count]="$pkg_dir"
+                            ((pkg_count++))
+                        fi
+                    done
+                fi
+            }
+            
+            # Scan all package directories
+            scan_packages "$l2usdir"
+            scan_packages "$l2ukdir"
+            scan_packages "$l2dmdir"
+            scan_packages "$l2sysdir"
+            scan_packages "$l2tooldir"
+            
+            if [ $pkg_count -eq 0 ]; then
+                echo "No packages found in ./pkgs"
+                exit
+            fi
+            
+            echo "Found $pkg_count package(s):"
+            echo ""
+            
+            # Display packages with numbers
+            for i in "${!packages[@]}"; do
+                pkg_name=$(basename "${packages[$i]}")
+                echo "$((i+1)). $pkg_name"
+            done
+            
+            echo ""
+            echo "0. Cancel"
+            echo -n "Select a package: "
+            read -r pkg_selection
+            
+            if [ "$pkg_selection" = "0" ] || [ -z "$pkg_selection" ]; then
+                echo "Cancelled."
+                exit
+            fi
+            
+            # Validate selection
+            if ! [[ "$pkg_selection" =~ ^[0-9]+$ ]] || [ "$pkg_selection" -lt 1 ] || [ "$pkg_selection" -gt "$pkg_count" ]; then
+                echo "Invalid selection."
+                exit
+            fi
+            
+            selected_pkg="${packages[$((pkg_selection-1))]}"
+            pkg_name=$(basename "$selected_pkg")
+            
+            echo ""
+            echo "Selected: $pkg_name"
+            echo "What would you like to do?"
+            echo "1. Copy to SD"
+            echo "2. Delete from SD"
+            echo "3. Delete from PC"
+            echo "4. Cancel"
+            echo -n "Choose an option: "
+            read -r pkg_action
+            
+            case $pkg_action in
+                1)
+                    # Copy to SD card
+                    echo "Look for your SD card and enter the path. (e.g. /dev/sdb)"
+                    echo "If it's not mounted, please mount it first."
+                    sudo fdisk -l
+                    echo -n "Path: "
+                    read -r sdpath
+                    
+                    # Get mount point
+                    mountpoint=$(lsblk -o MOUNTPOINT -n "$sdpath" | tr -d '[:space:]' | head -n 1)
+                    
+                    if [ -z "$mountpoint" ]; then
+                        echo "SD card is not mounted! Please mount it first."
+                        exit
+                    fi
+                    
+                    # Ensure Apps folder exists
+                    if [ ! -d "$mountpoint/Leapster/Apps" ]; then
+                        echo "Creating Apps folder on SD card..."
+                        mkdir -p "$mountpoint/Leapster/Apps"
+                    fi
+                    
+                    # Determine if it's a System package (SDMenu)
+                    if [[ "$selected_pkg" == *"System"* ]] || [[ "$pkg_name" == "SDMenu" ]]; then
+                        if [ ! -d "$mountpoint/Leapster/System" ]; then
+                            echo "Creating System folder on SD card..."
+                            mkdir -p "$mountpoint/Leapster/System"
+                        fi
+                        echo "Copying $pkg_name to System folder..."
+                        cp -r "$selected_pkg" "$mountpoint/Leapster/System/"
+                    else
+                        echo "Copying $pkg_name to Apps folder..."
+                        cp -r "$selected_pkg" "$mountpoint/Leapster/Apps/"
+                    fi
+                    
+                    echo "Done! $pkg_name has been copied to the SD card."
+                    ;;
+                2)
+                    # Delete from SD card
+                    echo "Are you sure you want to delete $pkg_name from the SD?"
+                    echo -n "Type 'yes' to confirm: "
+                    read -r confirm_delete
+                    
+                    if [ "$confirm_delete" = "yes" ]; then
+                        if [ -z "$mountpoint" ]; then
+                            echo "SD card is not mounted! Please mount it first."
+                            exit
+                        fi
+                        if [ "$pkg_name" == "SDMenu" ]; then
+                            echo "Deleting SDMenu from on the SD card..."
+                            rm -rf "$mountpoint/Leapster/System/$pkg_name"
+                        else
+                            echo "Deleting $pkg_name from on the SD card..."
+                            rm -rf "$mountpoint/Leapster/Apps/$pkg_name"
+                        fi
+                        echo "$pkg_name has been deleted from the SD card."
+                    else
+                        echo "Aborted."
+                    fi
+                    ;;
+                3)
+                    echo "Are you sure you want to delete $pkg_name from ./pkgs?"
+                    echo -n "Type 'yes' to confirm: "
+                    read -r confirm_delete_pc
+
+                    if [ "$confirm_delete_pc" = "yes" ]; then
+                        echo "Deleting $pkg_name from PC..."
+                        rm -rf "$selected_pkg"
+                        echo "$pkg_name has been deleted from PC."
+                    else
+                        echo "Aborted."
+                    fi
+                    ;;
+                4)
+                    echo "Aborted."
+                    ;;
+                *)
+                    echo "Invalid option."
+                    exit
+                    ;;
+            esac
+            ;;
+        c)
+            echo "This will attempt to clear all related LFTools files."
+            echo "Please do not use this to try to run other commands while the Leapster2/Didj is mounted or unmounted."
+            echo "This is only intended for an emergency situation where the Leapster2/Didj has either:"
+            echo "1. Disconnected itself for whatever reason"
+            echo "2. Frozen"
+            echo -n "Please make your choice now. (y/N): "
+            read -r clearc
+            if [ "$clearc" = 'y' ] || [ "$clearc" = 'Y' ]
+            then
+                echo "Clearing now..."
+                rm -rf ~/.lftools/
+                echo "Done. Please run the program again."
+                exit
+            else
+                echo "Aborted."
+                exit
+            fi
+            ;;
+        *)
+            echo "Invalid! Use -h for usage information."
+            exit
+     esac
+done
