@@ -29,7 +29,7 @@ fi
 
 updatec=n
 
-while getopts :mlxuhdUpc OPTION
+while getopts :mlxuhdfpc OPTION
 do
     case $OPTION in
         m)
