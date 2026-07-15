@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -fdiagnostics-color=always -Wall -g
-FILES = lf_main.c lf_dev.c hx_cr.c
+FILES = lf_main.c lf_dev.c
 TARGET = lftools
 
 all:

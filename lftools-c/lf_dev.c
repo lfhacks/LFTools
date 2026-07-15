@@ -13,6 +13,7 @@ void mountDevice(int deviceType)
 {
     switch(deviceType) {
         case 1: { // Didj
+            printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 Didj | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
                 printf(SCANERR "\n");
@@ -35,6 +36,7 @@ void mountDevice(int deviceType)
             exit(0);
         }
         case 2: { // Leapster2
+            printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 SD | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
                 printf(SCANERR "\n");
@@ -59,7 +61,7 @@ void mountDevice(int deviceType)
         }
         default:
             printf("Unknown device type!\n");
-            break;
+            exit(1);
     }
 }
 
@@ -67,6 +69,7 @@ void ejectDevice(int deviceType)
 {
     switch(deviceType) {
         case 1: { // Didj
+            printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 Didj | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
                 printf(SCANERR "\n");
@@ -89,6 +92,7 @@ void ejectDevice(int deviceType)
             exit(0);
         }
         case 2: { // Leapster2
+            printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 SD | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
                 printf(SCANERR "\n");
@@ -102,7 +106,7 @@ void ejectDevice(int deviceType)
             }
             pclose(fp);
             path[strcspn(path, "\n")] = 0;
-            printf("Found device!\n");
+            printf("Found device at: %s\n", path);
             // send CDB to device
             char cmd[PATH_LENGTH + 64];
             printf("running command: %s\n", cmd);
@@ -113,6 +117,8 @@ void ejectDevice(int deviceType)
         }
         default:
             printf("Unknown device type!\n");
-            break;
+            exit(1);
     }
 }
+
+// crammer support maybe in the future? it'd only be for music management though

@@ -80,17 +80,19 @@ int main(int argc, char *argv[])
         return 0;
     }
     if (strcmp(argv[1], "-m") == 0) {
-        // sg_scan and find LF device
-        // noting right now only the Didj is supported because the Leapster2 has 2 different SCSI devices, RAM and SD partitions
-        printf("Scanning for device...\n");
+        if (argc < 3) {
+            printf("Missing device type!\n");
+            exit(1);
+        }
         while (1) {
             mountDevice(atoi(argv[2]));
         }
     }
     if (strcmp(argv[1], "-x") == 0) {
-        // sg_scan and find LF device
-        // noting right now only the Didj is supported because the Leapster2 has 2 different SCSI devices, RAM and SD partitions
-        printf("Scanning for device...\n");
+        if (argc < 3) {
+            printf("Missing device type!\n");
+            exit(1);
+        }
         while (1) {
             ejectDevice(atoi(argv[2]));
         }
