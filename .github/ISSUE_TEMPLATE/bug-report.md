@@ -13,4 +13,6 @@ assignees: Awesome-neos145
 
 **Which OS are you using?**
 
-**Anything else?**
+**Which version of LFTools? (Shell or C)**
+
+**Additional Information**
