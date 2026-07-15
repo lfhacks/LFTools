@@ -12,14 +12,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include <signal.h>
 #include <stdarg.h>
 #include <sys/stat.h>
 #include "foreign.h"
 
 int doDepsChk(void);
 int doDirChk(void);
-void crashHandler(int sig);
 void mountDevice(int deviceType);
 void ejectDevice(int deviceType);
 
