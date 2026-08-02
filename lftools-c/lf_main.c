@@ -69,19 +69,22 @@ int main(int argc, char *argv[])
         printf("  -h               Show this help message\n");
         printf("  -m               Mount device\n");
         printf("  -x               Eject device\n");
-        printf("  -p               Package manager (unimplemented)\n");
+        printf("  -p               Package manager (only downloading)\n");
         printf("  --update-didj    Update Didj (unimplemented)\n");
         printf("Device Types:\n");
         printf("  1                Didj\n");
         printf("  2                Leapster2\n");
+        printf("Package Manager Options:\n");
+        printf("  download <name>  Download package by name\n");
         printf("For example, to mount a Leapster2:\n");
         printf("  ./lftools -m 2\n");
         printf("For more information, read the README.md file.\n");
+        // man page never
         return 0;
     }
     if (strcmp(argv[1], "-m") == 0) {
         if (argc < 3) {
-            printf("Missing device type!\n");
+            printf(MISSDEV "\n");
             exit(1);
         }
         while (1) {
@@ -90,12 +93,31 @@ int main(int argc, char *argv[])
     }
     if (strcmp(argv[1], "-x") == 0) {
         if (argc < 3) {
-            printf("Missing device type!\n");
+            printf(MISSDEV "\n");
             exit(1);
         }
         while (1) {
             ejectDevice(atoi(argv[2]));
         }
+    }
+    if (strcmp(argv[1], "-p") == 0) {
+        if (argc < 3) {
+            printf(MISSPARG "\n");
+            exit(1);
+        }
+        if (argc < 4) {
+            printf(MISSPKG "\n");
+            exit(1);
+        }
+        if (strcmp(argv[2], "download") == 0) {
+            dlPkg(argv[3]);
+        }
+    }
+    if (strcmp(argv[1], "--update-didj") == 0) {
+        printf("WARNING: You are intentionally doing something potentially harmful to your Didj.\n");
+        printf("Please plug your Didj into the wall (or load it with fresh batteries) to ensure the update is not interrupted.\n");
+        printf("Would you like to proceed? (y/N): ");
+        
     }
     return 0;
 }

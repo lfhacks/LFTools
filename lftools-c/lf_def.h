@@ -20,6 +20,7 @@ int doDepsChk(void);
 int doDirChk(void);
 void mountDevice(int deviceType);
 void ejectDevice(int deviceType);
+void dlPkg(char *pkg);
 
 #define VERSION "2.0-alpha1"
 #define PATH_LENGTH 1024

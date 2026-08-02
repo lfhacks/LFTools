@@ -17,3 +17,6 @@
 #define DEPSERR2 "Could not check for sg3_utils! Try again as root?"
 #define FIRSTRUN "It looks like this is your first time here! I will now create you a config directory..."
 #define DIRERR "Directory creation failed! Try again as root?"
+#define MISSDEV "Missing device type!"
+#define MISSPARG "Missing package option!"
+#define MISSPKG "Missing package name!"
