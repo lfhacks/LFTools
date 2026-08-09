@@ -26,6 +26,21 @@ int doDepsChk()
     return 0;
 }
 
+int doMachineCheck()
+{
+    // bomb out if running on macOS, as various required functions are not available there
+    #if (defined(__APPLE__))
+        printf(MACERR "\n");
+        exit(1);
+    #endif
+    // same with Windows, as this is Linux-specific
+    #if (defined(_WIN32) || defined(_WIN64))
+        printf(WINERR "\n");
+        exit(1);
+    #endif
+    return 0;
+}
+
 int doDirChk()
 {
     // check if "~/.lftools" folder exists, if not, create it
@@ -53,6 +68,7 @@ int main(int argc, char *argv[])
         // bruh
         exit(0);
     }
+    char wfuiGet[100]; // buffer for user input
     printf("LFTools v%s\n", VERSION);
     printf("--------------------------\n");
     doDirChk();
@@ -117,7 +133,12 @@ int main(int argc, char *argv[])
         printf("WARNING: You are intentionally doing something potentially harmful to your Didj.\n");
         printf("Please plug your Didj into the wall (or load it with fresh batteries) to ensure the update is not interrupted.\n");
         printf("Would you like to proceed? (y/N): ");
-        
+        waitForUserInput(wfuiGet);
+        if (strcmp(wfuiGet, "y") == 0 || strcmp(wfuiGet, "Y") == 0) {
+            printf("Proceeding with update...\n");
+        } else {
+            printf("Update cancelled.\n");
+        }
     }
     return 0;
 }

@@ -47,7 +47,7 @@ Ulilities to easily mount/eject Didj and Leapster2 devices, while also being abl
 # Features Completed (C Version)
 [X]Basic Mounting/Ejecting
 
-[-]Package Downloader
+[X]Package Downloader
 
 [-]Package Utilities
 

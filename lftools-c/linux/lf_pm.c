@@ -1,0 +1,15 @@
+//////////////////////////////////////
+//
+// LFTools Package Manager
+//
+// 2026 by Ian Mathews / awes145
+//
+//////////////////////////////////////
+
+#include "lf_def.h"
+
+void scnPkg(void) {
+    // scan packages
+    printf("Looking for packages...\n");
+    
+}

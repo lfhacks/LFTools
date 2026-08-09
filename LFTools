@@ -11,6 +11,11 @@ l2dmdir="$l2pkgdir/Demos"
 l2sysdir="$l2pkgdir/System"
 l2tooldir="$l2pkgdir/Tools"
 
+if [ -n "$ZSH_VERSION" ]; then
+    echo "Zsh detected. You may experience issues."
+    echo "note: you may not experience issues at all, this is kind of a precautionary for anyone under macOS"
+fi
+
 if [ -z "$sgchk" ]
 then
     # prompt install of sg3_utils

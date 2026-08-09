@@ -14,6 +14,11 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <sys/stat.h>
+
+// i have no fucking idea how to use iokit
+// i don't have a mac
+// i'm just gonna blindly use this and hope it works
+#include <iokit/IOKitLib.h>
 #include "foreign.h"
 
 int doDepsChk(void);
