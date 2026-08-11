@@ -1,6 +1,6 @@
 //////////////////////////////////////
 //
-// LFTools Package Manager
+// LFPkg (macOS) Package Manager
 //
 // 2026 by Ian Mathews / awes145
 //

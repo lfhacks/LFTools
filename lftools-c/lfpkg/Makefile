@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -fdiagnostics-color=always -Wall -g
-FILES = lf_main.c lf_dev.c lf_dlm.c
-TARGET = lftools
+FILES = lf_main.c lf_dlm.c
+TARGET = lfpkg
 
 all:
 	$(CC) $(CFLAGS) -o $(TARGET) $(FILES)

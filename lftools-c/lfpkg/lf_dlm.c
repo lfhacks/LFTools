@@ -1,6 +1,6 @@
 //////////////////////////////////////
 //
-// LFTools Download Manager
+// LFPkg (macOS) Download Manager
 //
 // 2026 by Ian Mathews / awes145
 //
@@ -46,6 +46,6 @@ char *pkgname = NULL;
     }
     char url[256];
     printf("Downloading package: %s (ID: %s)\n", pkgname, pkgid);
-    snprintf(url, sizeof(url), "wget -L -O %s.lfp https://archive.org/download/lstr-0x-00010011-000000/%s.lfp", pkgid, pkgid);
+    snprintf(url, sizeof(url), "curl -L -O https://archive.org/download/lstr-0x-00010011-000000/%s.lfp", pkgid);
     system(url);
 }

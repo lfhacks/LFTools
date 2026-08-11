@@ -20,5 +20,5 @@
 #define MISSDEV "Missing device type!"
 #define MISSPARG "Missing package option!"
 #define MISSPKG "Missing package name!"
-#define MACERR "This version of LFTools will not function on macOS.\nUse the included macOS-specific version."
+#define MACERR "LFTools will not function on macOS."
 #define WINERR "LFTools will not function on Windows."
