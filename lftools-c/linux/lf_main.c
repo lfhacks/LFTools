@@ -8,6 +8,21 @@
 
 #include "lf_def.h"
 
+int doMachineCheck()
+{
+    // bomb out if running on macOS, as various required functions are not available there
+    #if (defined(__APPLE__))
+        printf(MACERR "\n");
+        exit(1);
+    #endif
+    // same with Windows, as this is Linux-specific
+    #if (defined(_WIN32) || defined(_WIN64))
+        printf(WINERR "\n");
+        exit(1);
+    #endif
+    return 0;
+}
+
 int doDepsChk()
 {
     // check if "sginfo" is present in the system, which should confirm sg3_utils is installed
@@ -23,21 +38,6 @@ int doDepsChk()
         return 1;
     }
     pclose(fp);
-    return 0;
-}
-
-int doMachineCheck()
-{
-    // bomb out if running on macOS, as various required functions are not available there
-    #if (defined(__APPLE__))
-        printf(MACERR "\n");
-        exit(1);
-    #endif
-    // same with Windows, as this is Linux-specific
-    #if (defined(_WIN32) || defined(_WIN64))
-        printf(WINERR "\n");
-        exit(1);
-    #endif
     return 0;
 }
 
