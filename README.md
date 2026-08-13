@@ -28,7 +28,8 @@ sudo apt install build-essential git sg3-utils
 ```
 ## RedHat/Fedora:
 ```
-sudo dnf install gcc make git sg3_utils
+sudo dnf groupinstall "Development Tools"
+sudo dnf install git sg3_utils
 ```
 ## Arch Linux:
 ```
