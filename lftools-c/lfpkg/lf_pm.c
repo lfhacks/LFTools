@@ -7,3 +7,8 @@
 //////////////////////////////////////
 
 #include "lf_def.h"
+
+void extractFile(char *pkg)
+{
+    // run if user has specified the filename
+}

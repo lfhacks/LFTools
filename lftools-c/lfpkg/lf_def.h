@@ -18,6 +18,7 @@
 #include "foreign.h"
 
 void dlPkg(char *pkg);
+void lsPkg(void);
 
 #define VERSION "1.0"
 #define PATH_LENGTH 1024

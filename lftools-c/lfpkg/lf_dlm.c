@@ -49,3 +49,16 @@ char *pkgname = NULL;
     snprintf(url, sizeof(url), "curl -L -O https://archive.org/download/lstr-0x-00010011-000000/%s.lfp", pkgid);
     system(url);
 }
+
+void lsPkg(void) {
+    char *pkgid = NULL;
+    char *pkgname = NULL;
+    char *pkgref = NULL;
+    printf("Name - ID - Reference ID\n");
+    for (int i = 0; L2Pkgs[i][0] != NULL; i++) {
+        pkgref = L2Pkgs[i][0];
+        pkgname = L2Pkgs[i][1];
+        pkgid = L2Pkgs[i][2];
+        printf("%s, %s, %s\n", pkgname, pkgid, pkgref);
+    }
+}

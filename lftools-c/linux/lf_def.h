@@ -17,6 +17,7 @@
 #include "foreign.h"
 
 int doDepsChk(void);
+int doMachineCheck(void);
 int doDirChk(void);
 void mountDevice(int deviceType);
 void ejectDevice(int deviceType);

@@ -21,4 +21,4 @@
 #define MISSPARG "Missing package option!"
 #define MISSPKG "Missing package name!"
 #define MACERR "LFTools will not function on macOS."
-#define WINERR "LFTools will not function on Windows."
+#define WINERR "This version of LFTools will not function on Windows."

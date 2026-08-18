@@ -29,13 +29,13 @@ int doDepsChk()
     FILE *fp = popen("which sginfo 2>/dev/null", "r");
     if (fp == NULL) {
         printf(DEPSERR2 "\n");
-        abort();
+        exit(1);
     }
 
     char path[PATH_LENGTH];
     if (fgets(path, sizeof(path), fp) == NULL) {
         printf(DEPSERR "\n");
-        return 1;
+        exit(1);
     }
     pclose(fp);
     return 0;
@@ -64,10 +64,9 @@ int doDirChk()
 
 int main(int argc, char *argv[])
 {
-    if (doDepsChk() == 1) {
-        // bruh
-        exit(0);
-    }
+    doMachineCheck();
+    doDepsChk();
+    doDirChk();
     char wfuiGet[100]; // buffer for user input
     printf("LFTools v%s\n", VERSION);
     printf("--------------------------\n");
