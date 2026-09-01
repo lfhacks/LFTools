@@ -58,6 +58,7 @@ int doDirChk()
             abort();
         }
         printf("Done! Run [./lftools -h] to view usage information.\n");
+        exit(0);
     }
     return 0;
 }
@@ -74,9 +75,13 @@ int main(int argc, char *argv[])
 
     // parse command line arguments
     if (argc < 2) {
+        #ifdef CONSOLE
+        console();
+        #else
         printf("Usage: \"./lftools <switch>\"\n");
-        printf("Run \"./lftools -h\" for help.\n");
-        return 1;
+        printf("Run [./lftools -h] for more information.\n");
+        exit(1);
+        #endif
     }
     if (strcmp(argv[1], "-h") == 0) {
         printf("Usage: \"./lftools <switch>\"\n");
@@ -138,6 +143,13 @@ int main(int argc, char *argv[])
         } else {
             printf("Update cancelled.\n");
         }
+    }
+    if (strcmp(argv[1], "chk-con-sup") == 0) {
+        #ifdef CONSOLE
+        printf("Console is enabled.\n");
+        #else
+        printf("Console is not enabled.\n");
+        #endif
     }
     return 0;
 }
