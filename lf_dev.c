@@ -53,7 +53,6 @@ void mountDevice(int deviceType)
             printf("Found device!\n");
             // send CDB to device
             char cmd[PATH_LENGTH + 64];
-            printf("running command: %s\n", cmd);
             snprintf(cmd, sizeof(cmd), "sg_raw %s C2 00 00 00 00 00 00 00 00 00", path);
             system(cmd);
             printf("Mounted Leapster2!\n");
@@ -109,7 +108,6 @@ void ejectDevice(int deviceType)
             printf("Found device at: %s\n", path);
             // send CDB to device
             char cmd[PATH_LENGTH + 64];
-            printf("running command: %s\n", cmd);
             snprintf(cmd, sizeof(cmd), "sg_raw %s C6 00 00 00 00 00 00 00 00 00", path);
             system(cmd);
             printf("Ejected Leapster2!\n");

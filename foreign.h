@@ -8,7 +8,7 @@
 
 // no, wolf3d totally did not inspire this header file
 
-#define CONNERR "Could not find device!"
+#define CONNERR "Could not find device! Try again as root?"
 #define SCANERR "Could not scan for device! Try again as root?"
 #define MOUNTERR "Device is already mounted!"
 #define EJECTERR "No device to eject!"
@@ -22,3 +22,5 @@
 #define MISSPKG "Missing package name!"
 #define MACERR "LFTools will not function on macOS."
 #define WINERR "This version of LFTools will not function on Windows."
+#define MISSCDB "Command missing!"
+#define BOMB "Illegal instruction." // haha get it funny atari st reference

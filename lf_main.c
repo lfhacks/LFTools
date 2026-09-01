@@ -68,20 +68,16 @@ int main(int argc, char *argv[])
     doMachineCheck();
     doDepsChk();
     doDirChk();
-    char wfuiGet[100]; // buffer for user input
+    char didjopt[100]; // buffer for user input
     printf("LFTools v%s\n", VERSION);
     printf("--------------------------\n");
     doDirChk();
 
     // parse command line arguments
     if (argc < 2) {
-        #ifdef CONSOLE
-        console();
-        #else
         printf("Usage: \"./lftools <switch>\"\n");
         printf("Run [./lftools -h] for more information.\n");
         exit(1);
-        #endif
     }
     if (strcmp(argv[1], "-h") == 0) {
         printf("Usage: \"./lftools <switch>\"\n");
@@ -137,19 +133,13 @@ int main(int argc, char *argv[])
         printf("WARNING: You are intentionally doing something potentially harmful to your Didj.\n");
         printf("Please plug your Didj into the wall (or load it with fresh batteries) to ensure the update is not interrupted.\n");
         printf("Would you like to proceed? (y/N): ");
-        waitForUserInput(wfuiGet);
-        if (strcmp(wfuiGet, "y") == 0 || strcmp(wfuiGet, "Y") == 0) {
+        waitForUserInput(didjopt);
+        if (strcmp(didjopt, "y") == 0 || strcmp(didjopt, "Y") == 0) {
             printf("Proceeding with update...\n");
         } else {
             printf("Update cancelled.\n");
+            exit(1);
         }
-    }
-    if (strcmp(argv[1], "chk-con-sup") == 0) {
-        #ifdef CONSOLE
-        printf("Console is enabled.\n");
-        #else
-        printf("Console is not enabled.\n");
-        #endif
     }
     return 0;
 }

@@ -23,7 +23,6 @@ void mountDevice(int deviceType);
 void ejectDevice(int deviceType);
 void dlPkg(char *pkg);
 void waitForUserInput(char *wfuiGet);
-int console(void);
 
 #define VERSION "2.0-alpha1"
 #define PATH_LENGTH 1024
