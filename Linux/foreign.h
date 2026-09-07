@@ -24,3 +24,6 @@
 #define WINERR "This version of LFTools will not function on Windows."
 #define MISSCDB "Command missing!"
 #define BOMB "Illegal instruction." // haha get it funny atari st reference
+#define ALMNT "Device already mounted!"
+#define FILERR "Error creating mount file!"
+#define EJERR "No device to eject!"

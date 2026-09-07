@@ -1,0 +1,42 @@
+# Project: LFTools
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = lf_dev.o lf_dlm.o lf_gf.o lf_main.o lf_pm.o $(RES)
+LINKOBJ  = lf_dev.o lf_dlm.o lf_gf.o lf_main.o lf_pm.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib"  
+INCS =  -I"C:/Dev-Cpp/include" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include" 
+BIN  = LFTools.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before LFTools.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "LFTools.exe" $(LIBS)
+
+lf_dev.o: lf_dev.c
+	$(CC) -c lf_dev.c -o lf_dev.o $(CFLAGS)
+
+lf_dlm.o: lf_dlm.c
+	$(CC) -c lf_dlm.c -o lf_dlm.o $(CFLAGS)
+
+lf_gf.o: lf_gf.c
+	$(CC) -c lf_gf.c -o lf_gf.o $(CFLAGS)
+
+lf_main.o: lf_main.c
+	$(CC) -c lf_main.c -o lf_main.o $(CFLAGS)
+
+lf_pm.o: lf_pm.c
+	$(CC) -c lf_pm.c -o lf_pm.o $(CFLAGS)

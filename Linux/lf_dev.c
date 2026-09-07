@@ -13,6 +13,7 @@ void mountDevice(int deviceType)
 {
     switch(deviceType) {
         case 1: { // Didj
+            doMntChk(1);
             printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 Didj | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
@@ -27,15 +28,17 @@ void mountDevice(int deviceType)
             }
             pclose(fp);
             path[strcspn(path, "\n")] = 0;
-            printf("Found device!\n");
+            printf("Found Didj!\n");
             // send CDB to device
             char cmd[PATH_LENGTH + 64];
             snprintf(cmd, sizeof(cmd), "sg_raw %s C2 00 00 00 00 00 00 00 00 00", path);
             system(cmd);
-            printf("Mounted Didj!\n");
+            printf("Mounted!\n");
+            placeMntFile();
             exit(0);
         }
         case 2: { // Leapster2
+            doMntChk(1);
             printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 SD | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
@@ -50,12 +53,13 @@ void mountDevice(int deviceType)
             }
             pclose(fp);
             path[strcspn(path, "\n")] = 0;
-            printf("Found device!\n");
+            printf("Found leapster2!\n");
             // send CDB to device
             char cmd[PATH_LENGTH + 64];
             snprintf(cmd, sizeof(cmd), "sg_raw %s C2 00 00 00 00 00 00 00 00 00", path);
             system(cmd);
-            printf("Mounted Leapster2!\n");
+            printf("Mounted!\n");
+            placeMntFile();
             exit(0);
         }
         default:
@@ -68,6 +72,7 @@ void ejectDevice(int deviceType)
 {
     switch(deviceType) {
         case 1: { // Didj
+            doMntChk(2);
             printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 Didj | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
@@ -82,15 +87,17 @@ void ejectDevice(int deviceType)
             }
             pclose(fp);
             path[strcspn(path, "\n")] = 0;
-            printf("Found device!\n");
+            printf("Found Didj!\n");
             // send CDB to device
             char cmd[PATH_LENGTH + 64];
             snprintf(cmd, sizeof(cmd), "sg_raw %s C6 00 00 00 00 00 00 00 00 00", path);
             system(cmd);
-            printf("Ejected Didj!\n");
+            printf("Ejected!\n");
+            removeMntFile();
             exit(0);
         }
         case 2: { // Leapster2
+            doMntChk(2);
             printf("Scanning for device...\n");
             FILE *fp = popen("sg_scan -i 2>/dev/null | grep -B 1 SD | head -n 1 | tr -d ' ' | cut -d ':' -f 1", "r");
             if (fp == NULL) {
@@ -105,12 +112,13 @@ void ejectDevice(int deviceType)
             }
             pclose(fp);
             path[strcspn(path, "\n")] = 0;
-            printf("Found device at: %s\n", path);
+            printf("Found Leapster2!\n");
             // send CDB to device
             char cmd[PATH_LENGTH + 64];
             snprintf(cmd, sizeof(cmd), "sg_raw %s C6 00 00 00 00 00 00 00 00 00", path);
             system(cmd);
-            printf("Ejected Leapster2!\n");
+            printf("Ejected!\n");
+            removeMntFile();
             exit(0);
         }
         default:
@@ -119,4 +127,75 @@ void ejectDevice(int deviceType)
     }
 }
 
+void doMntChk(int typeChk)
+{
+    switch(typeChk) {
+        case 1: { // mount
+            char *home = getenv("HOME");
+            if (home == NULL) {
+                printf(HOMEERR "\n");
+                abort();
+            }
+            char path[PATH_LENGTH];
+            snprintf(path, sizeof(path), "%s/.lftools/mount", home);
+            if (access(path, F_OK) != 0) {
+                return; // okay, proceed with mounting
+            }
+            printf(ALMNT "\n");
+            exit(1);
+        }
+        case 2: { // eject
+            char *home = getenv("HOME");
+            if (home == NULL) {
+                printf(HOMEERR "\n");
+                abort();
+            }
+            char path[PATH_LENGTH];
+            snprintf(path, sizeof(path), "%s/.lftools/mount", home);
+            if (access(path, F_OK) == 0) {
+                return; // okay, proceed with ejecting
+            }
+            printf(EJERR "\n");
+            exit(1);
+        }
+        default:
+            printf("Missing type\n");
+            exit(1);
+    }
+}
+
+void placeMntFile()
+{
+    char *home = getenv("HOME");
+    if (home == NULL) {
+        printf(HOMEERR "\n");
+        abort();
+    }
+    char path[PATH_LENGTH];
+    snprintf(path, sizeof(path), "%s/.lftools/mount", home);
+    FILE *fp = fopen(path, "w");
+    if (fp == NULL) {
+        printf(FILERR "\n");
+        exit(1);
+    }
+    fclose(fp);
+}
+
+void removeMntFile()
+{
+    char *home = getenv("HOME");
+    if (home == NULL) {
+        printf(HOMEERR "\n");
+        abort();
+    }
+    char path[PATH_LENGTH];
+    snprintf(path, sizeof(path), "%s/.lftools/mount", home);
+    if (access(path, F_OK) != 0) {
+        return; // file doesn't exist, nothing to do
+    }
+    if (remove(path) != 0) {
+        printf(FILERR "\n");
+        exit(1);
+    }
+}
 // crammer support maybe in the future? it'd only be for music management though

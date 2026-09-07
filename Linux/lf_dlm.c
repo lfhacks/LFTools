@@ -49,3 +49,10 @@ char *pkgname = NULL;
     snprintf(url, sizeof(url), "wget -L -O %s.lfp https://archive.org/download/lstr-0x-00010011-000000/%s.lfp", pkgid, pkgid);
     system(url);
 }
+
+void lsPkg() {
+    printf("Name - Package ID - Reference ID\n");
+    for (int i = 0; L2Pkgs[i][0] != NULL; i++) {
+        printf("%s - %s - %s\n", L2Pkgs[i][1], L2Pkgs[i][2], L2Pkgs[i][0]);
+    }
+}

@@ -23,7 +23,10 @@ void mountDevice(int deviceType);
 void ejectDevice(int deviceType);
 void dlPkg(char *pkg);
 void waitForUserInput(char *wfuiGet);
-
+void doMntChk(int typeChk);
+void placeMntFile(void);
+void removeMntFile(void);
+void lsPkg(void);
 #define VERSION "2.0-alpha1"
 #define PATH_LENGTH 1024
 //#define CONSOLE

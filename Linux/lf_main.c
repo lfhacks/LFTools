@@ -92,6 +92,8 @@ int main(int argc, char *argv[])
         printf("  2                Leapster2\n");
         printf("Package Manager Options:\n");
         printf("  download <name>  Download package by name\n");
+        printf("  list             List available packages\n");
+        printf("To download a package, replace <name> with its Reference ID.\n");
         printf("For example, to mount a Leapster2:\n");
         printf("  ./lftools -m 2\n");
         printf("For more information, read the README.md file.\n");
@@ -121,12 +123,15 @@ int main(int argc, char *argv[])
             printf(MISSPARG "\n");
             exit(1);
         }
-        if (argc < 4) {
-            printf(MISSPKG "\n");
-            exit(1);
-        }
         if (strcmp(argv[2], "download") == 0) {
+            if (argc < 4) {
+                printf(MISSPKG "\n");
+                exit(1);
+            }
             dlPkg(argv[3]);
+        }
+        if (strcmp(argv[2], "list") == 0) {
+            lsPkg();
         }
     }
     if (strcmp(argv[1], "--update-didj") == 0) {
